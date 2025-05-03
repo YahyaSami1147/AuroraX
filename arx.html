@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AuroraX (ARX) - Meme Token</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+            font-family: 'Poppins', sans-serif;
+            color: #fff;
+            overflow: hidden;
+        }
+        .container {
+            text-align: center;
+            position: relative;
+            z-index: 1;
+            padding: 20px;
+        }
+        .logo {
+            width: 180px;
+            height: 180px;
+            margin-bottom: 30px;
+            filter: drop-shadow(0 0 10px rgba(255, 111, 97, 0.5));
+            border-radius: 50%;
+            object-fit: cover;
+            animation: spiral 4s linear infinite; /* Apply spiral animation */
+        }
+        @keyframes spiral {
+            0% {
+                transform: rotate(0deg) scale(1);
+            }
+            50% {
+                transform: rotate(180deg) scale(1.1); /* Slight scale up for spiral effect */
+            }
+            100% {
+                transform: rotate(360deg) scale(1);
+            }
+        }
+        h1 {
+            font-size: 3.5rem;
+            margin: 0;
+            background: linear-gradient(45deg, #ff6f61, #ff2e95, #00f2fe);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 700;
+            text-shadow: 0 0 20px rgba(255, 111, 97, 0.5);
+        }
+        .description {
+            font-size: 1.3rem;
+            max-width: 600px;
+            margin: 30px auto;
+            padding: 25px;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 15px;
+            box-shadow: 0 0 30px rgba(255, 111, 97, 0.4);
+            backdrop-filter: blur(8px);
+            line-height: 1.6;
+        }
+        canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 0;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <img src="Gc.png" alt="AuroraX Logo" class="logo">
+        <h1>AuroraX (ARX)</h1>
+        <div class="description">
+            AuroraX (ARX) is a vibrant meme token built on the Bitcoin Cash network with a fixed supply of 1,000 ARX, designed to spark creativity and community engagement.
+        </div>
+    </div>
+    <canvas id="trailCanvas"></canvas>
+
+    <script>
+        const canvas = document.getElementById('trailCanvas');
+        const ctx = canvas.getContext('2d');
+
+        // Set canvas size to window size
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        // Handle window resize
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+
+        // Particle class to represent each point in the trail
+        class Particle {
+            constructor(x, y) {
+                this.x = x;
+                this.y = y;
+                this.size = Math.random() * 25 + 20;
+                this.life = 1;
+                this.speedX = (Math.random() * 3 - 1.5) * 0.7;
+                this.speedY = (Math.random() * 3 - 1.5) * 0.7;
+                this.color = this.getRandomColor();
+            }
+
+            getRandomColor() {
+                const colors = [
+                    'rgba(255, 255, 255, 0.9)',
+                    'rgba(255, 0, 0, 0.9)',
+                    'rgba(0, 0, 255, 0.9)',
+                    'rgba(0, 255, 0, 0.9)',
+                    'rgba(255, 255, 0, 0.9)',
+                    'rgba(255, 165, 0, 0.9)',
+                    'rgba(128, 0, 128, 0.9)',
+                    'rgba(0, 128, 128, 0.9)',
+                    'rgba(255, 192, 203, 0.9)',
+                    'rgba(0, 0, 0, 0.9)',
+                    'rgba(128, 128, 128, 0.9)',
+                    'rgba(0, 0, 128, 0.9)',
+                    'rgba(128, 0, 0, 0.9)',
+                    'rgba(0, 128, 0, 0.9)',
+                    'rgba(255, 215, 0, 0.9)'
+                ];
+                return colors[Math.floor(Math.random() * colors.length)];
+            }
+
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+                this.life -= 0.01;
+                this.size *= 0.99;
+            }
+
+            draw() {
+                ctx.fillStyle = this.color;
+                ctx.globalAlpha = this.life;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.shadowBlur = 20;
+                ctx.shadowColor = this.color;
+                ctx.fill();
+            }
+        }
+
+        // Array to store particles
+        const particles = [];
+
+        // Handle mouse or touch movement
+        function handleMove(x, y) {
+            for (let i = 0; i < 7; i++) {
+                particles.push(new Particle(x, y));
+            }
+        }
+
+        // Mouse movement handler
+        document.addEventListener('mousemove', (e) => {
+            handleMove(e.clientX, e.clientY);
+        });
+
+        // Touch movement handler
+        document.addEventListener('touchmove', (e) => {
+            e.preventDefault();
+            const touch = e.touches[0];
+            handleMove(touch.clientX, touch.clientY);
+        }, { passive: false });
+
+        // Animation loop
+        function animate() {
+            ctx.fillStyle = 'rgba(15, 12, 41, 0.15)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            for (let i = particles.length - 1; i >= 0; i--) {
+                const particle = particles[i];
+                particle.update();
+                particle.draw();
+
+                if (particle.life <= 0) {
+                    particles.splice(i, 1);
+                }
+            }
+
+            ctx.globalAlpha = 1;
+            ctx.shadowBlur = 0;
+            requestAnimationFrame(animate);
+        }
+
+        // Start the animation loop
+        animate();
+    </script>
+</body>
+</html>
