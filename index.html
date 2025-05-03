@@ -9,55 +9,62 @@
         body {
             margin: 0;
             padding: 0;
-            height: 100vh;
+            min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
             background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
             font-family: 'Poppins', sans-serif;
             color: #fff;
-            overflow: hidden;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
         }
         .container {
             text-align: center;
             position: relative;
             z-index: 1;
-            padding: 20px;
+            padding: 2vmin;
+            max-width: 90%;
         }
         .logo {
-            width: 180px;
-            height: 180px;
-            margin-bottom: 30px;
+            width: 20vmin;
+            height: 20vmin;
+            min-width: 120px;
+            min-height: 120px;
+            max-width: 180px;
+            max-height: 180px;
+            margin-bottom: 3vmin;
             filter: drop-shadow(0 0 10px rgba(255, 111, 97, 0.5));
             border-radius: 50%;
             object-fit: cover;
-            animation: spiral 4s linear infinite; /* Apply spiral animation */
+            animation: spiral 4s linear infinite;
         }
         @keyframes spiral {
             0% {
                 transform: rotate(0deg) scale(1);
             }
             50% {
-                transform: rotate(180deg) scale(1.1); /* Slight scale up for spiral effect */
+                transform: rotate(180deg) scale(1.1);
             }
             100% {
                 transform: rotate(360deg) scale(1);
             }
         }
         h1 {
-            font-size: 3.5rem;
+            font-size: 6vmin;
             margin: 0;
             background: linear-gradient(45deg, #ff6f61, #ff2e95, #00f2fe);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             font-weight: 700;
             text-shadow: 0 0 20px rgba(255, 111, 97, 0.5);
+            line-height: 1.2;
         }
         .description {
-            font-size: 1.3rem;
-            max-width: 600px;
-            margin: 30px auto;
-            padding: 25px;
+            font-size: 2.5vmin;
+            max-width: 80vmin;
+            margin: 3vmin auto;
+            padding: 3vmin;
             background: rgba(255, 255, 255, 0.15);
             border-radius: 15px;
             box-shadow: 0 0 30px rgba(255, 111, 97, 0.4);
@@ -68,8 +75,84 @@
             position: fixed;
             top: 0;
             left: 0;
+            width: 100%;
+            height: 100%;
             z-index: 0;
             pointer-events: none;
+        }
+
+        /* Media Queries for Responsive Design */
+        @media (max-width: 480px) { /* Small Mobile */
+            .logo {
+                width: 18vmin;
+                height: 18vmin;
+                min-width: 100px;
+                min-height: 100px;
+            }
+            h1 {
+                font-size: 5vmin;
+            }
+            .description {
+                font-size: 2.2vmin;
+                padding: 2.5vmin;
+            }
+        }
+
+        @media (min-width: 481px) and (max-width: 768px) { /* Medium Mobile / Small Tablet */
+            .logo {
+                width: 20vmin;
+                height: 20vmin;
+            }
+            h1 {
+                font-size: 5.5vmin;
+            }
+            .description {
+                font-size: 2.4vmin;
+            }
+        }
+
+        @media (min-width: 769px) and (max-width: 1024px) { /* Tablet / Small Laptop */
+            .logo {
+                width: 22vmin;
+                height: 22vmin;
+            }
+            h1 {
+                font-size: 6vmin;
+            }
+            .description {
+                font-size: 2.5vmin;
+            }
+        }
+
+        @media (min-width: 1025px) and (max-width: 1440px) { /* Laptop */
+            .logo {
+                width: 20vmin;
+                height: 20vmin;
+                max-width: 160px;
+                max-height: 160px;
+            }
+            h1 {
+                font-size: 5.5vmin;
+            }
+            .description {
+                font-size: 2.3vmin;
+            }
+        }
+
+        @media (min-width: 1441px) { /* 4K Laptop / Large Screens */
+            .logo {
+                width: 18vmin;
+                height: 18vmin;
+                max-width: 200px;
+                max-height: 200px;
+            }
+            h1 {
+                font-size: 5vmin;
+            }
+            .description {
+                font-size: 2vmin;
+                max-width: 70vmin;
+            }
         }
     </style>
 </head>
@@ -87,22 +170,29 @@
         const canvas = document.getElementById('trailCanvas');
         const ctx = canvas.getContext('2d');
 
-        // Set canvas size to window size
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
+        // Adjust canvas for device pixel ratio (e.g., Retina, 4K displays)
+        const dpr = window.devicePixelRatio || 1;
+        canvas.width = window.innerWidth * dpr;
+        canvas.height = window.innerHeight * dpr;
+        canvas.style.width = `${window.innerWidth}px`;
+        canvas.style.height = `${window.innerHeight}px`;
+        ctx.scale(dpr, dpr);
 
         // Handle window resize
         window.addEventListener('resize', () => {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
+            canvas.width = window.innerWidth * dpr;
+            canvas.height = window.innerHeight * dpr;
+            canvas.style.width = `${window.innerWidth}px`;
+            canvas.style.height = `${window.innerHeight}px`;
+            ctx.scale(dpr, dpr);
         });
 
-        // Particle class to represent each point in the trail
+        // Particle class
         class Particle {
             constructor(x, y) {
                 this.x = x;
                 this.y = y;
-                this.size = Math.random() * 25 + 20;
+                this.size = Math.random() * 25 + 15; // Slightly smaller for performance
                 this.life = 1;
                 this.speedX = (Math.random() * 3 - 1.5) * 0.7;
                 this.speedY = (Math.random() * 3 - 1.5) * 0.7;
@@ -133,7 +223,7 @@
             update() {
                 this.x += this.speedX;
                 this.y += this.speedY;
-                this.life -= 0.01;
+                this.life -= 0.015; // Slightly faster fade for mobile performance
                 this.size *= 0.99;
             }
 
@@ -142,18 +232,18 @@
                 ctx.globalAlpha = this.life;
                 ctx.beginPath();
                 ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-                ctx.shadowBlur = 20;
+                ctx.shadowBlur = 15; // Reduced for performance
                 ctx.shadowColor = this.color;
                 ctx.fill();
             }
         }
 
-        // Array to store particles
         const particles = [];
 
-        // Handle mouse or touch movement
+        // Adjust particle count based on device width
         function handleMove(x, y) {
-            for (let i = 0; i < 7; i++) {
+            const particleCount = window.innerWidth < 480 ? 3 : window.innerWidth < 768 ? 5 : 7;
+            for (let i = 0; i < particleCount; i++) {
                 particles.push(new Particle(x, y));
             }
         }
@@ -173,7 +263,7 @@
         // Animation loop
         function animate() {
             ctx.fillStyle = 'rgba(15, 12, 41, 0.15)';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.fillRect(0, 0, canvas.width / dpr, canvas.height / dpr);
 
             for (let i = particles.length - 1; i >= 0; i--) {
                 const particle = particles[i];
@@ -190,7 +280,6 @@
             requestAnimationFrame(animate);
         }
 
-        // Start the animation loop
         animate();
     </script>
 </body>
