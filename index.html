@@ -200,29 +200,22 @@
         const canvas = document.getElementById('trailCanvas');
         const ctx = canvas.getContext('2d');
 
-        // Adjust canvas for device pixel ratio (e.g., Retina, 4K displays)
-        const dpr = window.devicePixelRatio || 1;
-        canvas.width = window.innerWidth * dpr;
-        canvas.height = window.innerHeight * dpr;
-        canvas.style.width = `${window.innerWidth}px`;
-        canvas.style.height = `${window.innerHeight}px`;
-        ctx.scale(dpr, dpr);
+        // Set canvas size to window size
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
 
         // Handle window resize
         window.addEventListener('resize', () => {
-            canvas.width = window.innerWidth * dpr;
-            canvas.height = window.innerHeight * dpr;
-            canvas.style.width = `${window.innerWidth}px`;
-            canvas.style.height = `${window.innerHeight}px`;
-            ctx.scale(dpr, dpr);
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
         });
 
-        // Particle class
+        // Particle class to represent each point in the trail
         class Particle {
             constructor(x, y) {
                 this.x = x;
                 this.y = y;
-                this.size = Math.random() * 25 + 15;
+                this.size = Math.random() * 25 + 20;
                 this.life = 1;
                 this.speedX = (Math.random() * 3 - 1.5) * 0.7;
                 this.speedY = (Math.random() * 3 - 1.5) * 0.7;
@@ -247,13 +240,13 @@
                     'rgba(0, 128, 0, 0.9)',
                     'rgba(255, 215, 0, 0.9)'
                 ];
-                return colors(Math.floor(Math.random() * colors.length));
+                return colors[Math.floor(Math.random() * colors.length)];
             }
 
             update() {
                 this.x += this.speedX;
                 this.y += this.speedY;
-                this.life -= 0.015;
+                this.life -= 0.01;
                 this.size *= 0.99;
             }
 
@@ -262,18 +255,18 @@
                 ctx.globalAlpha = this.life;
                 ctx.beginPath();
                 ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-                ctx.shadowBlur = 15;
+                ctx.shadowBlur = 20;
                 ctx.shadowColor = this.color;
                 ctx.fill();
             }
         }
 
+        // Array to store particles
         const particles = [];
 
-        // Adjust particle count based on device width
+        // Handle mouse or touch movement
         function handleMove(x, y) {
-            const particleCount = window.innerWidth < 480 ? 3 : window.innerWidth < 768 ? 5 : 7;
-            for (let i = 0; i < particleCount; i++) {
+            for (let i = 0; i < 7; i++) {
                 particles.push(new Particle(x, y));
             }
         }
@@ -286,17 +279,17 @@
         // Touch movement handler
         document.addEventListener('touchmove', (e) => {
             e.preventDefault();
-            const touch = e.touches(0);
+            const touch = e.touches[0];
             handleMove(touch.clientX, touch.clientY);
         }, { passive: false });
 
         // Animation loop
         function animate() {
             ctx.fillStyle = 'rgba(15, 12, 41, 0.15)';
-            ctx.fillRect(0, 0, canvas.width / dpr, canvas.height / dpr);
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
 
             for (let i = particles.length - 1; i >= 0; i--) {
-                const particle = particles(i);
+                const particle = particles[i];
                 particle.update();
                 particle.draw();
 
@@ -310,6 +303,7 @@
             requestAnimationFrame(animate);
         }
 
+        // Start the animation loop
         animate();
     </script>
 </body>
