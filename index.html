@@ -71,6 +71,17 @@
             backdrop-filter: blur(8px);
             line-height: 1.6;
         }
+        .token-id {
+            font-size: 2vmin;
+            word-break: break-all;
+            margin-top: 2vmin;
+            padding: 1.5vmin;
+            background: rgba(255, 111, 97, 0.2);
+            border-radius: 10px;
+            color: #fff;
+            font-family: 'Poppins', sans-serif;
+            line-height: 1.4;
+        }
         canvas {
             position: fixed;
             top: 0;
@@ -96,6 +107,10 @@
                 font-size: 2.2vmin;
                 padding: 2.5vmin;
             }
+            .token-id {
+                font-size: 1.8vmin;
+                padding: 1.2vmin;
+            }
         }
 
         @media (min-width: 481px) and (max-width: 768px) { /* Medium Mobile / Small Tablet */
@@ -109,6 +124,9 @@
             .description {
                 font-size: 2.4vmin;
             }
+            .token-id {
+                font-size: 1.9vmin;
+            }
         }
 
         @media (min-width: 769px) and (max-width: 1024px) { /* Tablet / Small Laptop */
@@ -121,6 +139,9 @@
             }
             .description {
                 font-size: 2.5vmin;
+            }
+            .token-id {
+                font-size: 2vmin;
             }
         }
 
@@ -136,6 +157,9 @@
             }
             .description {
                 font-size: 2.3vmin;
+            }
+            .token-id {
+                font-size: 1.9vmin;
             }
         }
 
@@ -153,6 +177,9 @@
                 font-size: 2vmin;
                 max-width: 70vmin;
             }
+            .token-id {
+                font-size: 1.8vmin;
+            }
         }
     </style>
 </head>
@@ -162,6 +189,9 @@
         <h1>AuroraX (ARX)</h1>
         <div class="description">
             AuroraX (ARX) is launched on the Bitcoin Cash network as a cashtoken with a fixed supply of 1,000 ARX, designed to spark creativity and community engagement.
+            <div class="token-id">
+                <strong>Token ID:</strong> 90db7c80e4a648220a932b90f5b08cfc2c12d8527b9d5c663806325077348507
+            </div>
         </div>
     </div>
     <canvas id="trailCanvas"></canvas>
@@ -192,7 +222,7 @@
             constructor(x, y) {
                 this.x = x;
                 this.y = y;
-                this.size = Math.random() * 25 + 15; // Slightly smaller for performance
+                this.size = Math.random() * 25 + 15;
                 this.life = 1;
                 this.speedX = (Math.random() * 3 - 1.5) * 0.7;
                 this.speedY = (Math.random() * 3 - 1.5) * 0.7;
@@ -217,13 +247,13 @@
                     'rgba(0, 128, 0, 0.9)',
                     'rgba(255, 215, 0, 0.9)'
                 ];
-                return colors[Math.floor(Math.random() * colors.length)];
+                return colors(Math.floor(Math.random() * colors.length));
             }
 
             update() {
                 this.x += this.speedX;
                 this.y += this.speedY;
-                this.life -= 0.015; // Slightly faster fade for mobile performance
+                this.life -= 0.015;
                 this.size *= 0.99;
             }
 
@@ -232,7 +262,7 @@
                 ctx.globalAlpha = this.life;
                 ctx.beginPath();
                 ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-                ctx.shadowBlur = 15; // Reduced for performance
+                ctx.shadowBlur = 15;
                 ctx.shadowColor = this.color;
                 ctx.fill();
             }
@@ -256,7 +286,7 @@
         // Touch movement handler
         document.addEventListener('touchmove', (e) => {
             e.preventDefault();
-            const touch = e.touches[0];
+            const touch = e.touches(0);
             handleMove(touch.clientX, touch.clientY);
         }, { passive: false });
 
@@ -266,7 +296,7 @@
             ctx.fillRect(0, 0, canvas.width / dpr, canvas.height / dpr);
 
             for (let i = particles.length - 1; i >= 0; i--) {
-                const particle = particles[i];
+                const particle = particles(i);
                 particle.update();
                 particle.draw();
 
